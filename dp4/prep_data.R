@@ -18,7 +18,7 @@ ira = read_csv('IRA_categorized_tribal.csv') %>%
 
 geo_usa = read_sf('usa.shp') %>%
 	select(GEOID10, SF, CF, TPF, ends_with('_EOMI'), N_WKFC_89, SN_T) %>%
-	filter(!is.na(TPF))
+	filter(!(is.na(TPF) | SF %in% c('Puerto Rico', 'Guam', 'Virgin Islands' , 'Northern Mariana Islands', 'American Samoa') | CF == 'Aleutians West Census Area' | GEOID10 == 15003981200))
 
 L = lapply(names(ira), function(i){
 	v = paste0('D_', str_replace(i, '[S]*N_', ''))
@@ -31,7 +31,7 @@ L = lapply(names(ira), function(i){
 	return(tbl)
 })
 
-geo_usa = full_join(L[[1]], L[[2]]) %>%
+ira_usa = full_join(L[[1]], L[[2]]) %>%
 	full_join(L[[3]]) %>%
 	full_join(L[[4]]) %>%
 	full_join(L[[5]]) %>%
@@ -40,3 +40,4 @@ geo_usa = full_join(L[[1]], L[[2]]) %>%
 	full_join(L[[8]]) %>%
 	full_join(geo_usa)
 	
+write_sf(ira_usa, 'ira.shp', append=FALSE)
