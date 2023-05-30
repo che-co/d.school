@@ -1,1 +1,6 @@
 *.zip
+*.dbf
+*.prj
+*.shp
+*.shx
+*.cpg
